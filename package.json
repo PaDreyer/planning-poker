@@ -7,8 +7,8 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "lerna run dev --parallel --stream",
-    "build": "lerna run build --parallel --stream && yarn copy-assets",
+    "dev": "lerna run dev --scope @planning-poker/backend --include-dependencies --parallel --stream",
+    "build": "lerna run build --scope @planning-poker/backend --include-dependencies && yarn copy-assets",
     "copy-assets": "cpy 'packages/web/build/**/*' packages/backend/build/public",
     "binary": "pkg .",
     "docker-image": "docker build -t planning-poker:latest .",
