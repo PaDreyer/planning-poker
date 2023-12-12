@@ -1,0 +1,12 @@
+{
+  "name": "@planning-poker/shared",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  }
+}

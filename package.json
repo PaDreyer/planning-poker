@@ -1,0 +1,30 @@
+{
+  "name": "@planning-poker/planning-poker",
+  "private": true,
+  "version": "1.0.0",
+  "bin": "packages/backend/build/bundle.js",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "lerna run dev --parallel --stream",
+    "build": "lerna run build --parallel --stream && yarn copy-assets",
+    "copy-assets": "cpy 'packages/web/build/**/*' packages/backend/build/public",
+    "binary": "pkg .",
+    "docker-image": "docker build -t planning-poker:latest .",
+    "predocker": "yarn docker-image",
+    "docker": "docker run --name planning-poker -p 8080:8080 --rm planning-poker:latest"
+  },
+  "pkg": {
+    "assets": ["packages/backend/build/public/**/*"],
+    "targets": ["node16-linux-x64", "node16-linux-arm64", "node16-macos-arm64", "node16-win-x64"],
+    "outputPath": "build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^8.0.0",
+    "typescript": "^5.3.2",
+    "cpy-cli": "^5.0.0",
+    "pkg": "^5.8.1"
+  }
+}
