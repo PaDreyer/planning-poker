@@ -24,7 +24,7 @@ jobs:
           images: |
             ghcr.io/PaDreyer/planning-poker
           tags: |
-            type=semver,pattern={{ env.NPM_PACKAGE_VERSION_CUSTOM }}
+            type=semver,pattern={{version}}
           # type=semver,pattern={{major}}.{{minor}}
           # type=semver,pattern={{major}}
           # type=semver,pattern={{date}}
