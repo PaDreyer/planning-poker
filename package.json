@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "dev": "lerna run dev --scope @planning-poker/backend --include-dependencies --parallel --stream",
+    "start": "node packages/backend/build/bundle.js",
     "build": "lerna run build --scope @planning-poker/backend --include-dependencies && yarn copy-assets",
     "copy-assets": "cpy 'packages/web/build/**/*' packages/backend/build/public",
     "binary": "pkg .",

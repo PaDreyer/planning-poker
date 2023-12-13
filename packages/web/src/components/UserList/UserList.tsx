@@ -1,9 +1,12 @@
-import React from 'react';
-import { Box, Card, Typography } from "@mui/material";
+import { useMemo, useRef, useState } from 'react';
+import { Box, Card, Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+
 
 type UserData = {
+    id: string;
     name: string;
     isAdmin: boolean;
     voted: boolean;
@@ -12,99 +15,145 @@ type UserData = {
 }
 
 type UserListProps = {
+    usedByAdmin: boolean;
     users: Array<UserData>;
+    handleKick: (id: string) => void;
 }
 
 /**
  * List members and their votes
- * @param props
- * @constructor
+ * @param props UserListProps
  */
 export function UserList(props: UserListProps) {
+    const [
+        contextMenuAnchorEl,
+        setContextMenuAnchorEl
+    ] = useState<null | HTMLElement>(null);
+    const contextMenuOpen = Boolean(contextMenuAnchorEl);
+    const contextMenuButtonRef = useRef<HTMLButtonElement>(null);
+    const handleClose = () => {
+        setContextMenuAnchorEl(null);
+    }
+    const handleOpen = () => {
+        setContextMenuAnchorEl(contextMenuButtonRef.current);
+    }
+
+    const handleKick = (id: string) => {
+        props.handleKick(id);
+        handleClose();
+    }
+
+    const columns = props.usedByAdmin ? 15 : 12;
+    const header = useMemo(() => {
+        const header = ["Name", "Priority", "Weight", "Voted"];
+        if (props.usedByAdmin) {
+            header.push("Options");
+        }
+        return header;
+    }, [props.usedByAdmin]);
+
+
+    const responsiveTitle = {
+        variant: {
+            xs: "subtitle2",
+            sm: "h6",
+        }
+    }
+
     return (
-        <Box mx={3} mb={9} mt={2}>
-            <Typography variant={"h4"} fontWeight={600} my={2}>
+        <Box
+            display={"flex"}
+            sx={{ px: 1, mb: 9, mt: 2 }}
+            alignItems={"center"}
+            flexDirection={"column"}
+            width={"100%"}
+        >
+            <Typography
+                variant={"h4"}
+                fontWeight={600}
+                sx={{
+                    mx: { xs: 1, sm: 0 },
+                    my: 2,
+                    alignSelf: "flex-start",
+                }}
+            >
                 Member
             </Typography>
-            <Box
-                display={"flex"}
-                flexDirection={"row"}
-                width={"100%"}
-                px={1.5}
-            >
-                { ["Name", "Priority", "Weight", "Voted"].map((title, idx, list) => (
-                    <Box
-                        key={`${title}-${idx}`}
+            <Grid container columns={columns} width={"100%"} rowSpacing={2} mt={1.5}>
+                <Grid container columns={columns} px={1.5}>
+                { header.map((title, idx, list) => (
+                    <Grid
+                        item
+                        key={idx}
+                        xs={3}
                         display={"flex"}
-                        flexGrow={1}
-                        justifyContent={idx === 0 ? "flex-start" : idx === list.length-1 ? "flex-end" : "center"}
+                        alignItems={"center"}
+                        justifyContent={idx === 0 ? "flex-start" :
+                            idx === list.length-1 ? "flex-end" : "center"
+                        }
                     >
-                        <Typography variant={"h6"} fontWeight={600}>
-                            {title}
+                        <Typography
+                            fontWeight={600}
+                            sx={responsiveTitle}
+                        >
+                            { title }
                         </Typography>
-                    </Box>
+                    </Grid>
                 ))}
-            </Box>
-            <Box>
+                </Grid>
                 { props.users.map((user, idx) => (
-                    <Card
-                        key={`${user.name}-${idx}`}
-                        sx={{
-                            p: 1.5,
-                            my: 2,
-                            display: "flex",
-                            flexDirection: "row",
-                        }}
-                    >
-                        <Box
-                            display={"flex"}
-                            flexBasis={"100%"}
-                            justifyContent={"flex-start"}
-                            alignItems={"center"}
-                        >
-                            <Typography fontSize={20} fontWeight={500}>
-                                {user.name}
-                            </Typography>
-                        </Box>
-
-                        <Box
-                            display={"flex"}
-                            flexBasis={"100%"}
-                            justifyContent={"center"}
-                            alignItems={"center"}
-                        >
-                            <Typography>
-                                {user.priority ?? "?"}
-                            </Typography>
-                        </Box>
-
-                        <Box
-                            display={"flex"}
-                            flexBasis={"100%"}
-                            justifyContent={"center"}
-                            alignItems={"center"}
-                        >
-                            <Typography>
-                                {user.weight ?? "?"}
-                            </Typography>
-                        </Box>
-
-                        <Box
-                            display={"flex"}
-                            flexBasis={"100%"}
-                            justifyContent={"flex-end"}
-                            alignItems={"center"}
-                        >
-                            <Box
-                                display={"flex"}
-                                justifyContent={"flex-end"}
-                            >
-                                { user.voted ? <CheckIcon fontSize={"large"} color={"success"} /> : <CloseIcon fontSize={"large"} color={"error"} /> }
-                            </Box>
-                        </Box>
-                    </Card>
+                    <Grid item xs={columns} sm={columns} md={columns}>
+                        <Card key={idx} sx={{ py: 1, px: 2 }}>
+                            <Grid container columns={columns} width={"100%"}>
+                                <Grid item xs={3} display={"flex"} alignItems={"center"} justifyContent={"flex-start"}>
+                                    <Typography fontWeight={500} sx={responsiveTitle}>
+                                        {user.name}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={3} display={"flex"} alignItems={"center"} justifyContent={"center"}>
+                                    <Typography textAlign={"center"} sx={responsiveTitle}>
+                                        {user.priority ?? "?"}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={3} display={"flex"} alignItems={"center"} justifyContent={"center"}>
+                                    <Typography textAlign={"center"} sx={responsiveTitle}>
+                                        {user.weight ?? "?"}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={3} display={"flex"} alignItems={"center"} justifyContent={props.usedByAdmin ? "center": "flex-end"}>
+                                    { user.voted ? <CheckIcon color={"success"} /> : <CloseIcon color={"error"} /> }
+                                </Grid>
+                                { props.usedByAdmin && (
+                                    <Grid item xs={3} display={"flex"} alignItems={"center"} justifyContent={"flex-end"}>
+                                        <IconButton
+                                            sx={{ visibility: user.isAdmin ? "hidden" : "visible" }}
+                                            id={"basic-button"}
+                                            aria-controls={contextMenuOpen ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={contextMenuOpen ? 'true' : undefined}
+                                            ref={contextMenuButtonRef}
+                                            onClick={handleOpen}
+                                        >
+                                            <MoreVertIcon />
+                                        </IconButton>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={contextMenuAnchorEl}
+                                            open={contextMenuOpen}
+                                            onClose={handleClose}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                        >
+                                            <MenuItem onClick={() => handleKick(user.id)}>kick</MenuItem>
+                                        </Menu>
+                                    </Grid>
+                                )}
+                            </Grid>
+                        </Card>
+                    </Grid>
                 ))}
-            </Box>
+            </Grid>
         </Box>
     )
 }

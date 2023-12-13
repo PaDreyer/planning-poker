@@ -35,6 +35,7 @@ type RoomData = {
     votedPriority: number | undefined;
     votedWeight: number | undefined;
     error: Error | undefined;
+    kicked: boolean;
     updateReason: RoomUpdateReason | undefined;
     lastUpdate: Date | undefined;
 }
@@ -57,6 +58,7 @@ export function useSocketRoom(socket: Socket, name: string, roomId: string): Roo
         votedWeight: undefined,
         revealed: false,
         error: undefined,
+        kicked: false,
         updateReason: undefined,
         lastUpdate: undefined,
     });
@@ -78,9 +80,17 @@ export function useSocketRoom(socket: Socket, name: string, roomId: string): Roo
             }));
         }
 
+        function handleKicked() {
+            setRoomData(prev => ({
+                ...prev,
+                kicked: true,
+            }));
+        }
+
         socket.emit('join-room', { roomId, name }, (res: EventStatus) => {
             if (res.success) {
                 socket.on("room-update", handleRoomUpdate);
+                socket.on("kicked", handleKicked);
                 setRoomData(prev => ({
                     ...prev,
                     initialized: true,
@@ -102,6 +112,7 @@ export function useSocketRoom(socket: Socket, name: string, roomId: string): Roo
 
         return () => {
             socket.off("room-update", handleRoomUpdate);
+            socket.off("kicked", handleKicked);
             socket.emit("leave", { roomId });
         }
     }, []);

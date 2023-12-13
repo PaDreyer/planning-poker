@@ -1,5 +1,13 @@
 import type { Socket } from "socket.io-client";
-import type { CreateOptions, EventStatus } from "@planning-poker/shared";
+import type {
+    CreateOptions,
+    EventStatus,
+    KickOptions,
+    ResetOptions,
+    RevealOptions,
+    VoteOptions
+} from "@planning-poker/shared";
+
 
 /**
  * Socket API
@@ -7,6 +15,10 @@ import type { CreateOptions, EventStatus } from "@planning-poker/shared";
 export class SocketApi {
     constructor(private readonly socket: Socket) {}
 
+    /**
+     * Create a room
+     * @param createOptions
+     */
     async createRoom(createOptions: CreateOptions): Promise<string> {
         return await new Promise((resolve, reject) => {
             this.socket.emit("create-room", createOptions, (res: EventStatus) => {
@@ -25,7 +37,7 @@ export class SocketApi {
      * @param priority
      * @param roomId
      */
-    async vote({ roomId, weight, priority }: { roomId: string, weight: number, priority: number }): Promise<string> {
+    async vote({ roomId, weight, priority }: VoteOptions): Promise<string> {
         return await new Promise((resolve, reject) => {
             this.socket.emit("vote", { weight, priority, roomId }, (res: EventStatus) => {
                 if (res.success) {
@@ -43,7 +55,7 @@ export class SocketApi {
      * Only callable by admin of the room
      * @param roomId
      */
-    async reveal({ roomId }: { roomId: string }): Promise<string> {
+    async reveal({ roomId }: RevealOptions): Promise<string> {
         return await new Promise((resolve, reject) => {
             this.socket.emit("reveal", { roomId }, (res: EventStatus) => {
                 if (res.success) {
@@ -61,9 +73,26 @@ export class SocketApi {
      * Only callable by admin of the room
      * @param roomId
      */
-    async reset({ roomId }: { roomId: string }): Promise<string> {
+    async reset({ roomId }: ResetOptions): Promise<string> {
         return await new Promise((resolve, reject) => {
             this.socket.emit("reset", { roomId }, (res: EventStatus) => {
+                if (res.success) {
+                    resolve(res.message);
+                } else {
+                    reject(res.message);
+                }
+            });
+        });
+    }
+
+    /**
+     * Kick a user from the room
+     * @param roomId
+     * @param socketId
+     */
+    async kick({ roomId, socketId }: KickOptions): Promise<string> {
+        return await new Promise((resolve, reject) => {
+            this.socket.emit("kick", { roomId, socketId }, (res: EventStatus) => {
                 if (res.success) {
                     resolve(res.message);
                 } else {
