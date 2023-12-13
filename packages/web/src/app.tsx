@@ -5,20 +5,20 @@ import { CssBaseline, IconButton, ThemeProvider, useMediaQuery } from "@mui/mate
 import IconClose from "@mui/icons-material/Close";
 import { createTheme } from "@mui/material/styles";
 
-import { ApplicationErrorBoundary } from "./boundaries/ApplicationErrorBoundary";
 import { HomeLayout } from "./layouts/HomeLayout";
 import { TheRoomCreation } from "./views/TheRoomCreation";
-import { TheRoom } from "./views/TheRoom";
+import { TheRoom } from "./views/Room/TheRoom";
 import { TheNotFound } from "./views/TheNotFound";
 import { TheHome } from "./views/TheHome";
-import { theme } from "./theme/theme";
+import { ApplicationErrorBoundary } from "./boundaries/ApplicationErrorBoundary";
 import { SocketProvider } from "./provider/socket";
 import { ColorModeContext } from "./provider/color-mode";
+import { theme } from "./theme/theme";
+
 
 
 function SnackbarCloseButton({ snackbarKey }: { snackbarKey: SnackbarKey }) {
     const { closeSnackbar } = useSnackbar();
-
     return (
         <IconButton onClick={() => closeSnackbar(snackbarKey)}>
             <IconClose />

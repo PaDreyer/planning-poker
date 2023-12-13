@@ -1,4 +1,5 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, useMediaQuery } from "@mui/material";
+import {Theme} from "@mui/material/styles";
 
 
 type AdminPanelProps = {
@@ -8,36 +9,47 @@ type AdminPanelProps = {
 
 /**
  * Admin panel to control the room
- * @param props
- * @constructor
+ * @param props AdminPanelProps
  */
 export function AdminPanel(props: AdminPanelProps) {
+    const buttonFullWith = useMediaQuery<Theme>(t => t.breakpoints.down("sm"));
+
     return (
         <Box
           display={"flex"}
           flexDirection={"column"}
-          mt={8}
-          mx={3}
-          mb={5}
+          sx={{ px: 1, mb: 3, mt: 2 }}
         >
-            <Typography variant={"h4"} fontWeight={600} pb={2}>
+            <Typography
+                variant={"h4"}
+                fontWeight={600}
+                sx={{
+                    mx: {
+                        xs: 1,
+                        sm: 0,
+                    },
+                    my: 2,
+                    alignSelf: "flex-start",
+                }}
+            >
                 Controls
             </Typography>
             <Box
                 display={"flex"}
                 flexDirection={"row"}
-                width={"100%"}
                 justifyContent={"flex-start"}
+                mt={1.5}
             >
                 <Button
-                    sx={{ mx: 2 }}
+                    fullWidth={buttonFullWith}
+                    sx={{ mr: 1}}
                     variant={"contained"}
                     onClick={props.onReveal}
                 >
                     Reveal cards
                 </Button>
                 <Button
-                    sx={{ mx: 2 }}
+                    fullWidth={buttonFullWith}
                     variant={"contained"}
                     onClick={props.onReset}
                 >

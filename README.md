@@ -1,14 +1,16 @@
 # Planning Poker
 
 ## Description
-A simple application to play planning poker with your team. 
+A simple application to play planning poker with your team.  
 The application is build with React and uses Node.js as a backend.
 
 ## Features
 - Configurable priorities and weights
 - Multiplayer, of course :)
+- Kick players, the "back in a minute" ones
 - Dark-Mode
-- Binary download
+- Binary download (linux, macos, windows)
+- Container images (amd64 & arm64)
 - No database required
 
 ## Example images
@@ -33,6 +35,27 @@ The application is build with React and uses Node.js as a backend.
 ## Installation
 There are several ways to install the application.
 
+### Source
+You can clone the repository and build the application yourself.
+```bash
+git clone https://github.com/PaDreyer/planning-poker.git
+cd planning-poker
+yarn install
+yarn build
+```
+After that you can start the application with the following command:
+```bash
+yarn start
+```
+
+### Node.js
+You can also download the bundled application code from the [release page](https://github.com/PaDreyer/planning-poker/releases).  
+After unzip you can start the application with the following command:
+```bash
+node bundle.js
+```
+**Note**: The public folder is required to run the application. It has to be in the same directory as the bundle.js file.
+
 ### Docker
 The easiest way to install the application is to use docker.
 You can download the image from GitHub Container Registry.
@@ -51,8 +74,7 @@ After that you can start the application with the following command:
 ./planning-poker-OS-ARCH
 ```
 
-#### Note
-Some binaries may require to be signed before you can execute them.  
+**Note**: Some binaries may require to be signed before you can execute them.  
 
 On macOS, you can sign the binary with the following command:
 ```bash

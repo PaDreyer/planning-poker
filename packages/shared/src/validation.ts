@@ -47,6 +47,11 @@ export const ResetOptionsValidation = z.object({
     roomId: roomIdValidation,
 });
 
+export const KickOptionsValidation = z.object({
+    roomId: roomIdValidation,
+    socketId: z.string(),
+});
+
 export const LeaveOptionsValidation = z.object({
     roomId: roomIdValidation,
 });

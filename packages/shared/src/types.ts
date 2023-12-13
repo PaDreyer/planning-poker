@@ -14,12 +14,14 @@ type ClientToServerEvents = {
     "vote": (voteOptions: VoteOptions, cb: ClientCallback) => void;
     "reveal": (revealOptions: RevealOptions, cb: ClientCallback) => void;
     "reset": (resetOptions: ResetOptions, cb: ClientCallback) => void;
+    "kick": (kickOptions: KickOptions, cb: ClientCallback) => void;
     "leave": (leaveOptions: LeaveOptions) => void;
     "disconnect": () => void;
 };
 
 type ServerToClientEvents = {
     "room-update": (data: RoomUpdate) => void;
+    "kicked": () => void;
 }
 
 export interface RoomMetadata {
@@ -86,6 +88,11 @@ export interface RevealOptions {
 
 export interface ResetOptions {
     roomId: string;
+}
+
+export interface KickOptions {
+    roomId: string;
+    socketId: string;
 }
 
 export interface LeaveOptions {

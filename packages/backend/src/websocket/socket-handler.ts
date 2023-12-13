@@ -16,6 +16,7 @@ import {
     RevealOptionsValidation,
     ResetOptionsValidation,
     LeaveOptionsValidation,
+    KickOptionsValidation,
 } from '@planning-poker/shared';
 import {
     checkIfRoomExists,
@@ -229,6 +230,37 @@ export function registerSocketHandler(io: SocketServer, socket: Socket) {
             return cb({ message: 'Reset', success: true });
         }
     );
+
+    socket.on(
+        "kick",
+        async (kickOptions: LeaveOptions, cb: ClientCallback) => {
+            const validationResult = KickOptionsValidation.safeParse(kickOptions);
+            if (!validationResult.success) {
+                return cb({ message: validationResult.error.toString(), success: false })
+            }
+
+            const { roomId, socketId } = validationResult.data;
+            if (!isSocketRoomAdmin(socket, roomId)) {
+                return cb({ message: 'You are not allowed to do that', success: false });
+            }
+
+            const socketToKick = io.sockets.sockets.get(socketId);
+            if (!socketToKick) {
+                return cb({ message: 'Socket not found', success: false });
+            }
+
+            if (!socketIsInRoom(socketToKick, roomId)) {
+                return cb({ message: 'Socket is not in room', success: false });
+            }
+
+            delete socketToKick.data[roomId];
+            socketToKick.emit("kicked");
+            socketToKick.leave(roomId);
+            await notifyRoomForUpdatedUserStates(io, roomId, "user-left");
+
+            return cb({ message: 'Kicked', success: true });
+        }
+    )
 
     socket.on(
         "leave",
